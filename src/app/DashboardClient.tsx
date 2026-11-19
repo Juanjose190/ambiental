@@ -34,10 +34,10 @@ export default function DashboardClient({
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-xl font-bold text-white">Dashboard Ejecutivo de Impacto Circular</h1>
-            <p className="text-sm text-emerald-200 mt-1">Ceiba Software &mdash; Modelo de Economía Circular TI con Ventas de Garaje Bimensuales + Acceso Estudiantil UCC Pasto</p>
+            <p className="text-sm text-emerald-200 mt-1">Ceiba Software &mdash; Modelo de Economía Circular TI con Ventas de Garaje Bimensuales</p>
             <p className="text-xs text-slate-300 mt-2 max-w-2xl leading-relaxed">
               Explore cada módulo: inventario de equipos, ciclo de vida con estrategias R, huella de carbono GreenOps,
-              y Ventas de Garaje Circulares donde colaboradores Ceiba y estudiantes UCC Pasto acceden a hardware corporativo reutilizado a precios solidarios.
+              y Ventas de Garaje Circulares donde la comunidad Ceiba accede a hardware corporativo reutilizado a precios solidarios.
             </p>
           </div>
           <div className="hidden lg:flex items-center gap-3 text-emerald-300">
@@ -101,7 +101,7 @@ export default function DashboardClient({
             <div>
               <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
                 Equipos Reutilizados
-                <ConceptTooltip concepto="Economía del Bien Común" explicacion="Los equipos reutilizados mediante Ventas de Garaje Bimensuales de Ceiba Software llegan a colaboradores y estudiantes UCC Pasto a precios solidarios, cerrando la brecha digital con principios de Economía del Bien Común." />
+                <ConceptTooltip concepto="Economía del Bien Común" explicacion="Los equipos reutilizados mediante Ventas de Garaje Bimensuales de Ceiba Software llegan a colaboradores y comunidad a precios solidarios, cerrando la brecha digital con principios de Economía del Bien Común." />
               </p>
               <p className="text-2xl font-bold text-gray-900 mt-1">{totalReacondicionados}</p>
               <p className="text-xs text-purple-700 mt-1">Vía Ventas de Garaje Circulares</p>

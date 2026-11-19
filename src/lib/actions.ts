@@ -89,9 +89,8 @@ export async function generarCertificadoRAEE(
 
 export async function crearVentaGaraje(
   equipoId: string,
-  canal: "Colaboradores Ceiba" | "Cupo Preferencial Estudiantes UCC",
+  canal: "Colaboradores Ceiba" | "Comunidad Ceiba",
   compradorNombre?: string,
-  estudianteUCC?: string,
   diagnostico?: string,
 ) {
   const db = getDb();
@@ -100,7 +99,6 @@ export async function crearVentaGaraje(
     equipoId,
     canal,
     compradorNombre,
-    estudianteUCC,
     estado: "Pendiente",
     fechaRegistro: new Date().toISOString().slice(0, 10),
     diagnostico,

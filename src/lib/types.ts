@@ -35,16 +35,15 @@ export interface Institucion {
   nombre: string;
   municipio: string;
   departamento: string;
-  tipo: "Educativa Rural" | "Urbana" | "Fundación";
+  tipo: "Aliada" | "Gestora RAEE" | "Fundación";
   contacto?: string;
 }
 
 export interface VentaGaraje {
   id: string;
   equipoId: string;
-  canal: "Colaboradores Ceiba" | "Cupo Preferencial Estudiantes UCC";
+  canal: "Colaboradores Ceiba" | "Comunidad Ceiba";
   compradorNombre?: string;
-  estudianteUCC?: string;
   estado: "Pendiente" | "En Proceso" | "Adjudicado";
   fechaRegistro: string;
   fechaAdjudicacion?: string;

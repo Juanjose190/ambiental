@@ -9,7 +9,6 @@ export default function SimbiosisPage() {
   return (
     <SimbiosisClient
       equipos={equiposDisponibles}
-      instituciones={db.instituciones}
       ventasGaraje={db.ventasGaraje}
       todosEquipos={db.equipos}
     />

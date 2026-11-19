@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "CeibaCircular - Economía Circular TI",
-  description: "Plataforma de Economía Circular TI, GreenOps y Simbiosis Académica - Ceiba Software + UCC Campus Pasto",
+  description: "Plataforma de Economía Circular TI y GreenOps - Ceiba Software",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

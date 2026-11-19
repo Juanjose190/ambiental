@@ -3,9 +3,9 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import {
-  ShoppingBag, Laptop, Tag, Users, CheckCircle, Clock, X, Leaf, GraduationCap, Building2,
+  ShoppingBag, Laptop, Tag, Users, CheckCircle, Clock, X, Leaf,
 } from "lucide-react";
-import type { Equipo, Institucion, VentaGaraje } from "@/lib/types";
+import type { Equipo, VentaGaraje } from "@/lib/types";
 import { crearVentaGaraje, actualizarVentaGaraje } from "@/lib/actions";
 import { getMinerals } from "@/lib/minerals";
 import ConceptTooltip from "@/components/ConceptTooltip";
@@ -27,12 +27,11 @@ function calcAhorro(precioVenta: number, precioComercial: number) {
 
 interface Props {
   equipos: Equipo[];
-  instituciones: Institucion[];
   ventasGaraje: VentaGaraje[];
   todosEquipos: Equipo[];
 }
 
-export default function SimbiosisClient({ equipos, instituciones, ventasGaraje, todosEquipos }: Props) {
+export default function SimbiosisClient({ equipos, ventasGaraje, todosEquipos }: Props) {
   const [showForm, setShowForm] = useState(false);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
@@ -41,9 +40,8 @@ export default function SimbiosisClient({ equipos, instituciones, ventasGaraje, 
     startTransition(async () => {
       await crearVentaGaraje(
         formData.get("equipoId") as string,
-        formData.get("canal") as "Colaboradores Ceiba" | "Cupo Preferencial Estudiantes UCC",
+        formData.get("canal") as "Colaboradores Ceiba" | "Comunidad Ceiba",
         (formData.get("compradorNombre") as string) || undefined,
-        (formData.get("estudianteUCC") as string) || undefined,
         (formData.get("diagnostico") as string) || undefined,
       );
       setShowForm(false);
@@ -61,7 +59,7 @@ export default function SimbiosisClient({ equipos, instituciones, ventasGaraje, 
   }
 
   const totalAdjudicados = ventasGaraje.filter((v) => v.estado === "Adjudicado").length;
-  const cupoUCC = ventasGaraje.filter((v) => v.canal === "Cupo Preferencial Estudiantes UCC").length;
+  const totalEnProceso = ventasGaraje.filter((v) => v.estado === "En Proceso").length;
 
   return (
     <div className="space-y-6">
@@ -69,9 +67,9 @@ export default function SimbiosisClient({ equipos, instituciones, ventasGaraje, 
         <div>
           <h1 className="text-2xl font-bold text-gray-900">
             Ventas de Garaje Circulares
-            <ConceptTooltip concepto="Reutilización y Economía del Bien Común" explicacion="Las ventas de garaje circulares de Ceiba Software ofrecen hardware corporativo usado a precios muy por debajo del mercado, extendiendo la vida útil de los equipos y cerrando la brecha digital. Los estudiantes UCC Pasto acceden con cupo preferencial tras diagnóstico técnico en sus laboratorios de Ingeniería de Software." />
+            <ConceptTooltip concepto="Reutilización y Economía del Bien Común" explicacion="Las ventas de garaje circulares de Ceiba Software ofrecen hardware corporativo usado a precios muy por debajo del mercado, extendiendo la vida útil de los equipos y cerrando la brecha digital." />
           </h1>
-          <p className="text-sm text-gray-500 mt-1">Reutilización de Hardware Ceiba + Cupo Preferencial UCC Pasto</p>
+          <p className="text-sm text-gray-500 mt-1">Reutilización de Hardware Corporativo Ceiba Software</p>
         </div>
         <button onClick={() => setShowForm(true)} className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm font-medium">
           <ShoppingBag className="w-4 h-4" /> Adjudicar en Venta de Garaje
@@ -79,7 +77,7 @@ export default function SimbiosisClient({ equipos, instituciones, ventasGaraje, 
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="kpi-card border-l-4 border-l-purple-500">
           <Laptop className="w-5 h-5 text-purple-500 mb-1" />
           <p className="text-xs text-gray-500">Equipos Disponibles</p>
@@ -91,14 +89,9 @@ export default function SimbiosisClient({ equipos, instituciones, ventasGaraje, 
           <p className="text-2xl font-bold text-gray-900">{totalAdjudicados}</p>
         </div>
         <div className="kpi-card border-l-4 border-l-blue-500">
-          <GraduationCap className="w-5 h-5 text-blue-500 mb-1" />
-          <p className="text-xs text-gray-500">Cupo UCC Pasto</p>
-          <p className="text-2xl font-bold text-gray-900">{cupoUCC}</p>
-        </div>
-        <div className="kpi-card border-l-4 border-l-amber-500">
-          <Building2 className="w-5 h-5 text-amber-500 mb-1" />
-          <p className="text-xs text-gray-500">Instituciones Aliadas</p>
-          <p className="text-2xl font-bold text-gray-900">{instituciones.length}</p>
+          <Clock className="w-5 h-5 text-blue-500 mb-1" />
+          <p className="text-xs text-gray-500">En Proceso</p>
+          <p className="text-2xl font-bold text-gray-900">{totalEnProceso}</p>
         </div>
       </div>
 
@@ -154,9 +147,7 @@ export default function SimbiosisClient({ equipos, instituciones, ventasGaraje, 
                     <Users className="w-3 h-3" />
                     <span>Colaboradores Ceiba</span>
                     <span className="mx-1">·</span>
-                    <GraduationCap className="w-3 h-3" />
-                    <ConceptTooltip concepto="Cupo Preferencial UCC" explicacion="Los equipos pasan primero por diagnóstico técnico en los laboratorios de Ingeniería de Software de la UCC Pasto. Los estudiantes acceden con cupo preferencial a precios de venta de garaje, cerrando la brecha digital y fortaleciendo la formación práctica." />
-                    <span>Cupo Preferencial UCC Pasto</span>
+                    <span>Comunidad Ceiba</span>
                   </div>
                 </div>
               );
@@ -192,11 +183,6 @@ export default function SimbiosisClient({ equipos, instituciones, ventasGaraje, 
                       {venta.compradorNombre && (
                         <p className="text-xs text-gray-600 mt-1 flex items-center gap-1">
                           <Users className="w-3 h-3" /> Comprador: {venta.compradorNombre}
-                        </p>
-                      )}
-                      {venta.estudianteUCC && (
-                        <p className="text-xs text-blue-600 mt-1 flex items-center gap-1">
-                          <GraduationCap className="w-3 h-3" /> Estudiante UCC: {venta.estudianteUCC}
                         </p>
                       )}
                       {venta.diagnostico && <p className="text-xs text-gray-500 mt-1">Diagnóstico: {venta.diagnostico}</p>}
@@ -243,16 +229,12 @@ export default function SimbiosisClient({ equipos, instituciones, ventasGaraje, 
                 <label className="text-xs font-medium text-gray-600">Canal de Acceso</label>
                 <select name="canal" required className="w-full mt-1 px-3 py-2 rounded-lg border text-sm">
                   <option value="Colaboradores Ceiba">Colaboradores Ceiba</option>
-                  <option value="Cupo Preferencial Estudiantes UCC">Cupo Preferencial Estudiantes UCC Pasto</option>
+                  <option value="Comunidad Ceiba">Comunidad Ceiba</option>
                 </select>
               </div>
               <div>
                 <label className="text-xs font-medium text-gray-600">Nombre del Comprador</label>
                 <input name="compradorNombre" className="w-full mt-1 px-3 py-2 rounded-lg border text-sm" placeholder="Nombre completo" />
-              </div>
-              <div>
-                <label className="text-xs font-medium text-gray-600">Estudiante UCC (si aplica)</label>
-                <input name="estudianteUCC" className="w-full mt-1 px-3 py-2 rounded-lg border text-sm" placeholder="Nombre del estudiante Ing. Software UCC" />
               </div>
               <div>
                 <label className="text-xs font-medium text-gray-600">Diagnóstico técnico</label>

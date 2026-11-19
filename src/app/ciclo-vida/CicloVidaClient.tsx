@@ -254,7 +254,7 @@ export default function CicloVidaClient({ equipos, acciones, certificados }: Pro
               disabled={!borradoChecks.every(Boolean) || isPending}
               className="w-full mt-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium disabled:opacity-50 flex items-center justify-center gap-2">
               <CheckCircle2 className="w-4 h-4" />
-              {isPending ? "Certificando..." : "Certificar Borrado y Avanzar a Simbiosis"}
+              {isPending ? "Certificando..." : "Certificar Borrado y Aprobar para Venta de Garaje"}
             </button>
           </div>
         </div>

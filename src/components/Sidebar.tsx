@@ -7,7 +7,7 @@ import {
   PackageSearch,
   RefreshCw,
   Cloud,
-  GraduationCap,
+  ShoppingBag,
   Leaf,
   Recycle,
 } from "lucide-react";
@@ -17,7 +17,7 @@ const links = [
   { href: "/inventario", label: "Inventario Circular", sub: "Flota de equipos", icon: PackageSearch },
   { href: "/ciclo-vida", label: "Ciclo de Vida & R's", sub: "Gestión de estados", icon: RefreshCw },
   { href: "/greenops", label: "Calculadora GreenOps", sub: "Huella de carbono", icon: Cloud },
-  { href: "/simbiosis", label: "Ventas de Garaje", sub: "Reutilización Hardware", icon: GraduationCap },
+  { href: "/simbiosis", label: "Ventas de Garaje", sub: "Reutilización Hardware", icon: ShoppingBag },
 ];
 
 export default function Sidebar() {
@@ -59,8 +59,8 @@ export default function Sidebar() {
         <div className="flex items-center gap-2 text-xs" style={{ color: "#94a3b8" }}>
           <Leaf className="w-4 h-4 text-emerald-400" />
           <div>
-            <p className="font-medium text-slate-200">Ceiba Software + UCC</p>
-            <p>Campus Pasto, Nariño</p>
+            <p className="font-medium text-slate-200">Ceiba Software</p>
+            <p>Pasto, Nariño</p>
           </div>
         </div>
       </div>
