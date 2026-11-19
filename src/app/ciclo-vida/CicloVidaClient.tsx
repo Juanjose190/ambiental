@@ -8,6 +8,7 @@ import {
 import type { Equipo, AccionR, CertificadoRAEE } from "@/lib/types";
 import { updateEquipoEstado, aplicarEstrategiaR, marcarBorradoSeguro, generarCertificadoRAEE } from "@/lib/actions";
 import ConceptTooltip from "@/components/ConceptTooltip";
+import { toast } from "@/components/Toast";
 
 const ESTADOS: Equipo["estado"][] = ["En Uso", "Mantenimiento Preventivo", "Reparación", "Listo para Simbiosis UCC", "Baja RAEE"];
 
@@ -54,6 +55,7 @@ export default function CicloVidaClient({ equipos, acciones, certificados }: Pro
       startTransition(async () => {
         await updateEquipoEstado(equipo.id, next);
         router.refresh();
+        toast(`Equipo avanzado a "${next}"`);
       });
     }
   }
@@ -70,6 +72,7 @@ export default function CicloVidaClient({ equipos, acciones, certificados }: Pro
       setShowRModal(false);
       setSelectedEquipo(null);
       router.refresh();
+      toast("Estrategia R aplicada exitosamente");
     });
   }
 
@@ -82,6 +85,7 @@ export default function CicloVidaClient({ equipos, acciones, certificados }: Pro
       setBorradoChecks([false, false, false, false]);
       setSelectedEquipo(null);
       router.refresh();
+      toast("Borrado seguro NIST 800-88 completado");
     });
   }
 
@@ -97,6 +101,7 @@ export default function CicloVidaClient({ equipos, acciones, certificados }: Pro
       setShowRAEE(false);
       setSelectedEquipo(null);
       router.refresh();
+      toast("Certificado RAEE generado");
     });
   }
 
@@ -134,25 +139,25 @@ export default function CicloVidaClient({ equipos, acciones, certificados }: Pro
       </div>
 
       {/* Kanban Columns */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-3" style={{ minWidth: 0 }}>
         {ESTADOS.map((estado) => (
-          <div key={estado} className="space-y-2">
-            <div className={`p-2 rounded-lg border ${ESTADO_BG[estado]}`}>
-              <h3 className="text-xs font-bold text-gray-800 text-center">{estado}</h3>
+          <div key={estado} className="space-y-2 min-w-0">
+            <div className={`px-3 py-2 rounded-lg border ${ESTADO_BG[estado]}`}>
+              <h3 className="text-xs font-bold text-gray-800 text-center truncate">{estado}</h3>
             </div>
             {equipos
               .filter((e) => e.estado === estado)
               .map((equipo) => (
-                <div key={equipo.id} className="card p-3 space-y-2">
-                  <p className="text-xs font-semibold text-gray-900 leading-tight">{equipo.nombre}</p>
-                  <p className="text-[10px] text-gray-500">{equipo.marca} &middot; {equipo.serial}</p>
+                <div key={equipo.id} className="card p-3 space-y-2.5">
+                  <p className="text-sm font-semibold text-gray-900 leading-tight">{equipo.nombre}</p>
+                  <p className="text-xs text-gray-600 truncate">{equipo.marca} · {equipo.serial}</p>
 
                   {equipo.vidaExtendidaAnios > 0 && (
-                    <span className="badge bg-emerald-100 text-emerald-700 text-[10px]">+{equipo.vidaExtendidaAnios}a vida extendida</span>
+                    <span className="badge bg-emerald-100 text-emerald-700 text-xs">+{equipo.vidaExtendidaAnios}a vida extendida</span>
                   )}
 
                   {equipo.borradoSeguro && (
-                    <span className="badge bg-blue-100 text-blue-700 text-[10px]">
+                    <span className="badge bg-blue-100 text-blue-700 text-xs">
                       <ShieldCheck className="w-3 h-3" /> NIST 800-88
                     </span>
                   )}
@@ -160,19 +165,19 @@ export default function CicloVidaClient({ equipos, acciones, certificados }: Pro
                   <div className="flex gap-1 flex-wrap">
                     {estado !== "Baja RAEE" && estado !== "Listo para Simbiosis UCC" && (
                       <button onClick={() => { setSelectedEquipo(equipo); setShowRModal(true); }}
-                        className="flex items-center gap-1 px-2 py-1 text-[10px] font-medium bg-emerald-100 text-emerald-700 rounded hover:bg-emerald-200 transition-colors">
+                        className="flex items-center gap-1 px-2 py-1 text-xs font-medium bg-emerald-100 text-emerald-700 rounded hover:bg-emerald-200 transition-colors">
                         <Wrench className="w-3 h-3" /> Estrategia R
                       </button>
                     )}
                     {estado !== "Baja RAEE" && (
                       <button onClick={() => handleAdvance(equipo)}
-                        className="flex items-center gap-1 px-2 py-1 text-[10px] font-medium bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors" disabled={isPending}>
+                        className="flex items-center gap-1 px-2 py-1 text-xs font-medium bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors" disabled={isPending}>
                         <ArrowRight className="w-3 h-3" /> Avanzar
                       </button>
                     )}
                     {estado === "Reparación" && (
                       <button onClick={() => { setSelectedEquipo(equipo); setShowRAEE(true); }}
-                        className="flex items-center gap-1 px-2 py-1 text-[10px] font-medium bg-red-100 text-red-700 rounded hover:bg-red-200 transition-colors">
+                        className="flex items-center gap-1 px-2 py-1 text-xs font-medium bg-red-100 text-red-700 rounded hover:bg-red-200 transition-colors">
                         <FileWarning className="w-3 h-3" /> Baja RAEE
                       </button>
                     )}

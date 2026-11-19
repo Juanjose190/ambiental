@@ -3,7 +3,10 @@ import path from "node:path";
 import type { Database } from "./types";
 import { seedData } from "./seed";
 
-const DB_PATH = path.join(process.cwd(), "data", "db.json");
+const isVercel = !!process.env.VERCEL;
+const DB_PATH = isVercel
+  ? path.join("/tmp", "db.json")
+  : path.join(process.cwd(), "data", "db.json");
 
 function ensureDir() {
   const dir = path.dirname(DB_PATH);

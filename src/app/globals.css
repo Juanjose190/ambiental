@@ -54,9 +54,9 @@ body {
   color: #e2e8f0;
 }
 .sidebar-link.active {
-  background: linear-gradient(135deg, #059669, #047857);
+  background: linear-gradient(135deg, #047857, #065f46);
   color: #ffffff;
-  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.3);
+  box-shadow: 0 2px 8px rgba(4, 120, 87, 0.3);
 }
 
 .card {
@@ -103,4 +103,12 @@ body {
 .kpi-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes slide-in {
+  from { opacity: 0; transform: translateX(100%); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.animate-slide-in {
+  animation: slide-in 0.3s ease-out;
 }

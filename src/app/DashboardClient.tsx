@@ -7,7 +7,7 @@ import {
 import { Trash2, Wind, Droplets, Monitor, TreePine, Mountain } from "lucide-react";
 import ConceptTooltip from "@/components/ConceptTooltip";
 
-const FLOTA_COLORS = ["#10b981", "#3b82f6", "#f59e0b", "#8b5cf6", "#ef4444"];
+const FLOTA_COLORS = ["#059669", "#2563eb", "#d97706", "#7c3aed", "#dc2626"];
 
 const mesLabels: Record<string, string> = {
   "2024-05": "May", "2024-06": "Jun", "2024-07": "Jul",
@@ -30,9 +30,20 @@ export default function DashboardClient({
 }: Props) {
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Dashboard Ejecutivo de Impacto Circular</h1>
-        <p className="text-sm text-gray-500 mt-1">Ceiba Software &mdash; Modelo de Economía Circular TI en alianza con UCC Campus Pasto</p>
+      <div className="card" style={{ background: "linear-gradient(135deg, #064e3b 0%, #0f2440 100%)" }}>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-xl font-bold text-white">Dashboard Ejecutivo de Impacto Circular</h1>
+            <p className="text-sm text-emerald-200 mt-1">Ceiba Software &mdash; Modelo de Economía Circular TI en alianza con UCC Campus Pasto</p>
+            <p className="text-xs text-slate-300 mt-2 max-w-2xl leading-relaxed">
+              Explore cada módulo en la barra lateral: revise el inventario de equipos, gestione su ciclo de vida con las estrategias R,
+              calcule la huella de carbono con GreenOps y coordine donaciones a instituciones educativas de Nariño.
+            </p>
+          </div>
+          <div className="hidden lg:flex items-center gap-3 text-emerald-300">
+            <TreePine className="w-10 h-10 opacity-30" />
+          </div>
+        </div>
       </div>
 
       {/* KPI Cards */}
@@ -45,7 +56,7 @@ export default function DashboardClient({
                 <ConceptTooltip concepto="RAEE - Residuos de Aparatos Eléctricos y Electrónicos" explicacion="Los RAEE contienen sustancias tóxicas como plomo, mercurio y cadmio. Su correcta gestión previene la contaminación de suelos y fuentes hídricas (Saneamiento Ambiental)." />
               </p>
               <p className="text-2xl font-bold text-gray-900 mt-1">{totalRAEEEvitados} kg</p>
-              <p className="text-xs text-emerald-600 mt-1">Dispositivos desviados del vertedero</p>
+              <p className="text-xs text-emerald-700 mt-1">Dispositivos desviados del vertedero</p>
             </div>
             <div className="w-12 h-12 rounded-xl bg-red-50 flex items-center justify-center">
               <Trash2 className="w-6 h-6 text-red-500" />
@@ -61,7 +72,7 @@ export default function DashboardClient({
                 <ConceptTooltip concepto="Ciclo del Carbono y Cambio Climático" explicacion="El CO₂ es el principal gas de efecto invernadero. Extender la vida útil de equipos TI reduce las emisiones asociadas a la manufactura de nuevos dispositivos, mitigando el cambio climático." />
               </p>
               <p className="text-2xl font-bold text-gray-900 mt-1">{(totalCO2Mitigado / 1000).toFixed(1)} ton</p>
-              <p className="text-xs text-emerald-600 mt-1">Modelo circular vs. lineal</p>
+              <p className="text-xs text-emerald-700 mt-1">Modelo circular vs. lineal</p>
             </div>
             <div className="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center">
               <Wind className="w-6 h-6 text-emerald-500" />
@@ -77,7 +88,7 @@ export default function DashboardClient({
                 <ConceptTooltip concepto="Ciclo del Agua y Data Centers" explicacion="Los centros de datos consumen enormes cantidades de agua para refrigeración. Las prácticas GreenOps y la optimización de infraestructura cloud reducen este consumo, protegiendo el ciclo hidrológico." />
               </p>
               <p className="text-2xl font-bold text-gray-900 mt-1">{(totalAguaAhorrada / 1000).toFixed(1)}k L</p>
-              <p className="text-xs text-blue-600 mt-1">Refrigeración Data Centers</p>
+              <p className="text-xs text-blue-700 mt-1">Refrigeración Data Centers</p>
             </div>
             <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center">
               <Droplets className="w-6 h-6 text-blue-500" />
@@ -93,7 +104,7 @@ export default function DashboardClient({
                 <ConceptTooltip concepto="Economía del Bien Común" explicacion="La donación de equipos reacondicionados a instituciones educativas rurales de Nariño cierra la brecha digital y genera impacto social positivo, alineado con los principios de la Economía del Bien Común." />
               </p>
               <p className="text-2xl font-bold text-gray-900 mt-1">{totalReacondicionados}</p>
-              <p className="text-xs text-purple-600 mt-1">Entregados a instituciones Nariño</p>
+              <p className="text-xs text-purple-700 mt-1">Entregados a instituciones Nariño</p>
             </div>
             <div className="w-12 h-12 rounded-xl bg-purple-50 flex items-center justify-center">
               <Monitor className="w-6 h-6 text-purple-500" />
@@ -118,8 +129,8 @@ export default function DashboardClient({
               <YAxis tick={{ fontSize: 12 }} />
               <Tooltip contentStyle={{ borderRadius: "8px", fontSize: "12px" }} />
               <Legend wrapperStyle={{ fontSize: "12px" }} />
-              <Bar dataKey="lineal" name="Modelo Lineal Tradicional" fill="#ef4444" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="circular" name="Modelo Circular Ceiba" fill="#10b981" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="lineal" name="Modelo Lineal Tradicional" fill="#dc2626" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="circular" name="Modelo Circular Ceiba" fill="#059669" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -130,7 +141,7 @@ export default function DashboardClient({
           <p className="text-xs text-gray-500 mb-4">Distribución actual de {flotaData.reduce((s, d) => s + d.value, 0)} activos</p>
           <ResponsiveContainer width="100%" height={200}>
             <PieChart>
-              <Pie data={flotaData} cx="50%" cy="50%" innerRadius={45} outerRadius={80} dataKey="value" label={({ name, value }) => `${name} (${value})`} labelLine={false}>
+              <Pie data={flotaData} cx="50%" cy="50%" innerRadius={45} outerRadius={80} dataKey="value" label={false}>
                 {flotaData.map((_, i) => (
                   <Cell key={i} fill={FLOTA_COLORS[i % FLOTA_COLORS.length]} />
                 ))}

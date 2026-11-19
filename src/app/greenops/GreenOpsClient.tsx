@@ -73,7 +73,7 @@ export default function GreenOpsClient() {
                   <span className="text-sm font-bold text-blue-600">{ambientes}</span>
                 </div>
                 <input type="range" min={5} max={50} value={ambientes} onChange={(e) => setAmbientes(Number(e.target.value))} className="w-full accent-blue-600" />
-                <div className="flex justify-between text-[10px] text-gray-400"><span>5</span><span>50</span></div>
+                <div className="flex justify-between text-xs text-gray-500"><span>5</span><span>50</span></div>
               </div>
 
               <div className="flex items-center justify-between p-3 rounded-lg bg-gray-50">
@@ -81,7 +81,7 @@ export default function GreenOpsClient() {
                   {apagadoNocturno ? <Moon className="w-4 h-4 text-indigo-500" /> : <Sun className="w-4 h-4 text-amber-500" />}
                   <div>
                     <p className="text-xs font-medium text-gray-700">Apagado nocturno/fines de semana</p>
-                    <p className="text-[10px] text-gray-500">14h/día de ahorro energético</p>
+                    <p className="text-xs text-gray-500">14h/día de ahorro energético</p>
                   </div>
                 </div>
                 <button onClick={() => setApagadoNocturno(!apagadoNocturno)}
@@ -98,7 +98,7 @@ export default function GreenOpsClient() {
                       Región Cloud Verde
                       <ConceptTooltip concepto="Energía Renovable / Inagotable" explicacion="Las regiones cloud verdes usan 100% energía renovable (solar, eólica). Estos son recursos inagotables que no generan emisiones directas de CO₂, a diferencia de los combustibles fósiles (no renovables)." />
                     </p>
-                    <p className="text-[10px] text-gray-500">100% energía renovable (solar/eólica)</p>
+                    <p className="text-xs text-gray-500">100% energía renovable (solar/eólica)</p>
                   </div>
                 </div>
                 <button onClick={() => setRegionVerde(!regionVerde)}
@@ -139,25 +139,25 @@ export default function GreenOpsClient() {
               <Zap className="w-5 h-5 text-yellow-500 mb-1" />
               <p className="text-xs text-gray-500">Ahorro Energético</p>
               <p className="text-lg font-bold text-gray-900">{(ahorroKwh / 1000).toFixed(1)}k</p>
-              <p className="text-[10px] text-gray-500">kWh/año</p>
+              <p className="text-xs text-gray-500">kWh/año</p>
             </div>
             <div className="kpi-card border-l-4 border-l-emerald-500">
               <Leaf className="w-5 h-5 text-emerald-500 mb-1" />
               <p className="text-xs text-gray-500">CO₂ Reducido</p>
               <p className="text-lg font-bold text-gray-900">{totalCO2Ahorrado.toFixed(1)}</p>
-              <p className="text-[10px] text-gray-500">ton CO₂/año</p>
+              <p className="text-xs text-gray-500">ton CO₂/año</p>
             </div>
             <div className="kpi-card border-l-4 border-l-green-600">
               <DollarSign className="w-5 h-5 text-green-600 mb-1" />
               <p className="text-xs text-gray-500">Ahorro Costos</p>
               <p className="text-lg font-bold text-gray-900">${ahorroCostoUSD.toFixed(0)}</p>
-              <p className="text-[10px] text-gray-500">USD/año</p>
+              <p className="text-xs text-gray-500">USD/año</p>
             </div>
             <div className="kpi-card border-l-4 border-l-green-700">
               <TreePine className="w-5 h-5 text-green-700 mb-1" />
               <p className="text-xs text-gray-500">Equivale a</p>
               <p className="text-lg font-bold text-gray-900">{Math.round(arboles)}</p>
-              <p className="text-[10px] text-gray-500">árboles sembrados</p>
+              <p className="text-xs text-gray-500">árboles sembrados</p>
             </div>
           </div>
 
@@ -172,7 +172,7 @@ export default function GreenOpsClient() {
                 <Tooltip contentStyle={{ borderRadius: "8px", fontSize: "12px" }} />
                 <Legend wrapperStyle={{ fontSize: "12px" }} />
                 <Bar dataKey="cloud" name="Emisiones Cloud (ton CO₂)" fill="#3b82f6" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="transporte" name="Emisiones Transporte (ton CO₂)" fill="#f59e0b" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="transporte" name="Emisiones Transporte (ton CO₂)" fill="#d97706" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>

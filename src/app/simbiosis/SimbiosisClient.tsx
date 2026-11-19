@@ -8,6 +8,7 @@ import {
 import type { Equipo, Institucion, Asignacion } from "@/lib/types";
 import { crearAsignacion, actualizarAsignacion } from "@/lib/actions";
 import ConceptTooltip from "@/components/ConceptTooltip";
+import { toast } from "@/components/Toast";
 
 const ESTADO_ASIGNACION_COLORS: Record<string, string> = {
   Pendiente: "bg-amber-100 text-amber-800",
@@ -40,6 +41,7 @@ export default function SimbiosisClient({ equipos, instituciones, asignaciones, 
       );
       setShowAssign(false);
       router.refresh();
+      toast("Asignación creada exitosamente");
     });
   }
 
@@ -47,6 +49,7 @@ export default function SimbiosisClient({ equipos, instituciones, asignaciones, 
     startTransition(async () => {
       await actualizarAsignacion(asignacionId, estado);
       router.refresh();
+      toast(estado === "En Proceso" ? "Proceso iniciado" : "Entrega registrada exitosamente");
     });
   }
 
@@ -129,7 +132,7 @@ export default function SimbiosisClient({ equipos, instituciones, asignaciones, 
             <div key={inst.id} className="p-3 rounded-lg border hover:shadow-sm transition-shadow">
               <p className="text-sm font-medium text-gray-900">{inst.nombre}</p>
               <div className="flex items-center gap-1 mt-1">
-                <MapPin className="w-3 h-3 text-gray-400" />
+                <MapPin className="w-3 h-3 text-gray-500" />
                 <p className="text-xs text-gray-500">{inst.municipio}, {inst.departamento}</p>
               </div>
               <span className="badge bg-blue-100 text-blue-700 mt-2">{inst.tipo}</span>
@@ -168,7 +171,7 @@ export default function SimbiosisClient({ equipos, instituciones, asignaciones, 
                       )}
                       {asig.notasLinux && <p className="text-xs text-gray-500 mt-1">Linux: {asig.notasLinux}</p>}
                       {asig.diagnostico && <p className="text-xs text-gray-500 mt-1">Diagnóstico: {asig.diagnostico}</p>}
-                      <p className="text-xs text-gray-400 mt-1">Asignado: {asig.fechaAsignacion}{asig.fechaEntrega && ` &middot; Entregado: ${asig.fechaEntrega}`}</p>
+                      <p className="text-xs text-gray-500 mt-1">Asignado: {asig.fechaAsignacion}{asig.fechaEntrega && ` · Entregado: ${asig.fechaEntrega}`}</p>
                     </div>
                     <div className="flex gap-2">
                       {asig.estado === "Pendiente" && (

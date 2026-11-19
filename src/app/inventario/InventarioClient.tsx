@@ -9,6 +9,7 @@ import type { Equipo } from "@/lib/types";
 import { getMinerals, MINERAL_INFO, type MineralContent } from "@/lib/minerals";
 import { addEquipo } from "@/lib/actions";
 import ConceptTooltip from "@/components/ConceptTooltip";
+import { toast } from "@/components/Toast";
 
 const CERT_COLORS: Record<string, string> = {
   "EPEAT Gold": "bg-emerald-100 text-emerald-800",
@@ -58,6 +59,7 @@ export default function InventarioClient({ equipos }: { equipos: Equipo[] }) {
       });
       setShowForm(false);
       router.refresh();
+      toast("Equipo registrado exitosamente");
     });
   }
 
