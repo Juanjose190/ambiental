@@ -17,7 +17,7 @@ const links = [
   { href: "/inventario", label: "Inventario Circular", sub: "Flota de equipos", icon: PackageSearch },
   { href: "/ciclo-vida", label: "Ciclo de Vida & R's", sub: "Gestión de estados", icon: RefreshCw },
   { href: "/greenops", label: "Calculadora GreenOps", sub: "Huella de carbono", icon: Cloud },
-  { href: "/simbiosis", label: "Simbiosis Académica", sub: "Donaciones UCC", icon: GraduationCap },
+  { href: "/simbiosis", label: "Ventas de Garaje", sub: "Reutilización Hardware", icon: GraduationCap },
 ];
 
 export default function Sidebar() {

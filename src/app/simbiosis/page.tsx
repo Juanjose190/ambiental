@@ -5,12 +5,12 @@ export const dynamic = "force-dynamic";
 
 export default function SimbiosisPage() {
   const db = getDb();
-  const equiposDisponibles = db.equipos.filter((e) => e.estado === "Listo para Simbiosis UCC");
+  const equiposDisponibles = db.equipos.filter((e) => e.estado === "Aprobado para Venta de Garaje");
   return (
     <SimbiosisClient
       equipos={equiposDisponibles}
       instituciones={db.instituciones}
-      asignaciones={db.asignaciones}
+      ventasGaraje={db.ventasGaraje}
       todosEquipos={db.equipos}
     />
   );

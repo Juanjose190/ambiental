@@ -10,13 +10,13 @@ import { updateEquipoEstado, aplicarEstrategiaR, marcarBorradoSeguro, generarCer
 import ConceptTooltip from "@/components/ConceptTooltip";
 import { toast } from "@/components/Toast";
 
-const ESTADOS: Equipo["estado"][] = ["En Uso", "Mantenimiento Preventivo", "Reparación", "Listo para Simbiosis UCC", "Baja RAEE"];
+const ESTADOS: Equipo["estado"][] = ["En Uso", "Mantenimiento Preventivo", "Reparación", "Aprobado para Venta de Garaje", "Baja RAEE"];
 
 const ESTADO_COLORS: Record<string, string> = {
   "En Uso": "bg-emerald-500",
   "Mantenimiento Preventivo": "bg-blue-500",
   "Reparación": "bg-amber-500",
-  "Listo para Simbiosis UCC": "bg-purple-500",
+  "Aprobado para Venta de Garaje": "bg-purple-500",
   "Baja RAEE": "bg-red-500",
 };
 
@@ -24,7 +24,7 @@ const ESTADO_BG: Record<string, string> = {
   "En Uso": "bg-emerald-50 border-emerald-200",
   "Mantenimiento Preventivo": "bg-blue-50 border-blue-200",
   "Reparación": "bg-amber-50 border-amber-200",
-  "Listo para Simbiosis UCC": "bg-purple-50 border-purple-200",
+  "Aprobado para Venta de Garaje": "bg-purple-50 border-purple-200",
   "Baja RAEE": "bg-red-50 border-red-200",
 };
 
@@ -47,7 +47,7 @@ export default function CicloVidaClient({ equipos, acciones, certificados }: Pro
     const idx = ESTADOS.indexOf(equipo.estado);
     if (idx < ESTADOS.length - 1) {
       const next = ESTADOS[idx + 1];
-      if (next === "Listo para Simbiosis UCC" && !equipo.borradoSeguro) {
+      if (next === "Aprobado para Venta de Garaje" && !equipo.borradoSeguro) {
         setSelectedEquipo(equipo);
         setShowBorrado(true);
         return;
@@ -80,7 +80,7 @@ export default function CicloVidaClient({ equipos, acciones, certificados }: Pro
     if (!selectedEquipo || !borradoChecks.every(Boolean)) return;
     startTransition(async () => {
       await marcarBorradoSeguro(selectedEquipo.id);
-      await updateEquipoEstado(selectedEquipo.id, "Listo para Simbiosis UCC");
+      await updateEquipoEstado(selectedEquipo.id, "Aprobado para Venta de Garaje");
       setShowBorrado(false);
       setBorradoChecks([false, false, false, false]);
       setSelectedEquipo(null);
@@ -163,7 +163,7 @@ export default function CicloVidaClient({ equipos, acciones, certificados }: Pro
                   )}
 
                   <div className="flex gap-1 flex-wrap">
-                    {estado !== "Baja RAEE" && estado !== "Listo para Simbiosis UCC" && (
+                    {estado !== "Baja RAEE" && estado !== "Aprobado para Venta de Garaje" && (
                       <button onClick={() => { setSelectedEquipo(equipo); setShowRModal(true); }}
                         className="flex items-center gap-1 px-2 py-1 text-xs font-medium bg-emerald-100 text-emerald-700 rounded hover:bg-emerald-200 transition-colors">
                         <Wrench className="w-3 h-3" /> Estrategia R

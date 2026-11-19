@@ -34,10 +34,10 @@ export default function DashboardClient({
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-xl font-bold text-white">Dashboard Ejecutivo de Impacto Circular</h1>
-            <p className="text-sm text-emerald-200 mt-1">Ceiba Software &mdash; Modelo de Economía Circular TI en alianza con UCC Campus Pasto</p>
+            <p className="text-sm text-emerald-200 mt-1">Ceiba Software &mdash; Modelo de Economía Circular TI con Ventas de Garaje Bimensuales + Acceso Estudiantil UCC Pasto</p>
             <p className="text-xs text-slate-300 mt-2 max-w-2xl leading-relaxed">
-              Explore cada módulo en la barra lateral: revise el inventario de equipos, gestione su ciclo de vida con las estrategias R,
-              calcule la huella de carbono con GreenOps y coordine donaciones a instituciones educativas de Nariño.
+              Explore cada módulo: inventario de equipos, ciclo de vida con estrategias R, huella de carbono GreenOps,
+              y Ventas de Garaje Circulares donde colaboradores Ceiba y estudiantes UCC Pasto acceden a hardware corporativo reutilizado a precios solidarios.
             </p>
           </div>
           <div className="hidden lg:flex items-center gap-3 text-emerald-300">
@@ -100,11 +100,11 @@ export default function DashboardClient({
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
-                Equipos Reacondicionados
-                <ConceptTooltip concepto="Economía del Bien Común" explicacion="La donación de equipos reacondicionados a instituciones educativas rurales de Nariño cierra la brecha digital y genera impacto social positivo, alineado con los principios de la Economía del Bien Común." />
+                Equipos Reutilizados
+                <ConceptTooltip concepto="Economía del Bien Común" explicacion="Los equipos reutilizados mediante Ventas de Garaje Bimensuales de Ceiba Software llegan a colaboradores y estudiantes UCC Pasto a precios solidarios, cerrando la brecha digital con principios de Economía del Bien Común." />
               </p>
               <p className="text-2xl font-bold text-gray-900 mt-1">{totalReacondicionados}</p>
-              <p className="text-xs text-purple-700 mt-1">Entregados a instituciones Nariño</p>
+              <p className="text-xs text-purple-700 mt-1">Vía Ventas de Garaje Circulares</p>
             </div>
             <div className="w-12 h-12 rounded-xl bg-purple-50 flex items-center justify-center">
               <Monitor className="w-6 h-6 text-purple-500" />

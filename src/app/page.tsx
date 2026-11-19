@@ -15,7 +15,7 @@ export default function DashboardPage() {
     "En Uso": db.equipos.filter((e) => e.estado === "En Uso").length,
     "Mantenimiento": db.equipos.filter((e) => e.estado === "Mantenimiento Preventivo").length,
     "Reparación": db.equipos.filter((e) => e.estado === "Reparación").length,
-    "Reacondicionado UCC": db.equipos.filter((e) => e.estado === "Listo para Simbiosis UCC").length,
+    "Venta de Garaje": db.equipos.filter((e) => e.estado === "Aprobado para Venta de Garaje").length,
     "Baja RAEE": db.equipos.filter((e) => e.estado === "Baja RAEE").length,
   };
 

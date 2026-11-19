@@ -22,7 +22,7 @@ const ESTADO_COLORS: Record<string, string> = {
   "En Uso": "bg-emerald-100 text-emerald-800",
   "Mantenimiento Preventivo": "bg-blue-100 text-blue-800",
   "Reparación": "bg-amber-100 text-amber-800",
-  "Listo para Simbiosis UCC": "bg-purple-100 text-purple-800",
+  "Aprobado para Venta de Garaje": "bg-purple-100 text-purple-800",
   "Baja RAEE": "bg-red-100 text-red-800",
 };
 

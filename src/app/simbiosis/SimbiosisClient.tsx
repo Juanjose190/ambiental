@@ -3,68 +3,78 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import {
-  GraduationCap, School, Laptop, UserPlus, FileText, CheckCircle, Clock, Package, X, MapPin,
+  ShoppingBag, Laptop, Tag, Users, CheckCircle, Clock, X, Leaf, GraduationCap, Building2,
 } from "lucide-react";
-import type { Equipo, Institucion, Asignacion } from "@/lib/types";
-import { crearAsignacion, actualizarAsignacion } from "@/lib/actions";
+import type { Equipo, Institucion, VentaGaraje } from "@/lib/types";
+import { crearVentaGaraje, actualizarVentaGaraje } from "@/lib/actions";
+import { getMinerals } from "@/lib/minerals";
 import ConceptTooltip from "@/components/ConceptTooltip";
 import { toast } from "@/components/Toast";
 
-const ESTADO_ASIGNACION_COLORS: Record<string, string> = {
+const ESTADO_VENTA_COLORS: Record<string, string> = {
   Pendiente: "bg-amber-100 text-amber-800",
   "En Proceso": "bg-blue-100 text-blue-800",
-  Entregado: "bg-emerald-100 text-emerald-800",
+  Adjudicado: "bg-emerald-100 text-emerald-800",
 };
+
+function formatCOP(value: number) {
+  return new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP", maximumFractionDigits: 0 }).format(value);
+}
+
+function calcAhorro(precioVenta: number, precioComercial: number) {
+  return Math.round(((precioComercial - precioVenta) / precioComercial) * 100);
+}
 
 interface Props {
   equipos: Equipo[];
   instituciones: Institucion[];
-  asignaciones: Asignacion[];
+  ventasGaraje: VentaGaraje[];
   todosEquipos: Equipo[];
 }
 
-export default function SimbiosisClient({ equipos, instituciones, asignaciones, todosEquipos }: Props) {
-  const [showAssign, setShowAssign] = useState(false);
-  const [showActa, setShowActa] = useState<Asignacion | null>(null);
+export default function SimbiosisClient({ equipos, instituciones, ventasGaraje, todosEquipos }: Props) {
+  const [showForm, setShowForm] = useState(false);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
-  function handleAssign(formData: FormData) {
+  function handleVenta(formData: FormData) {
     startTransition(async () => {
-      await crearAsignacion(
+      await crearVentaGaraje(
         formData.get("equipoId") as string,
-        formData.get("tipo") as "Reacondicionamiento UCC" | "Donación Institución",
-        (formData.get("institucionId") as string) || undefined,
-        (formData.get("estudianteNombre") as string) || undefined,
-        (formData.get("notasLinux") as string) || undefined,
+        formData.get("canal") as "Colaboradores Ceiba" | "Cupo Preferencial Estudiantes UCC",
+        (formData.get("compradorNombre") as string) || undefined,
+        (formData.get("estudianteUCC") as string) || undefined,
         (formData.get("diagnostico") as string) || undefined,
       );
-      setShowAssign(false);
+      setShowForm(false);
       router.refresh();
-      toast("Asignación creada exitosamente");
+      toast("Equipo adjudicado en venta de garaje");
     });
   }
 
-  function handleUpdateEstado(asignacionId: string, estado: "En Proceso" | "Entregado") {
+  function handleUpdateEstado(ventaId: string, estado: "En Proceso" | "Adjudicado") {
     startTransition(async () => {
-      await actualizarAsignacion(asignacionId, estado);
+      await actualizarVentaGaraje(ventaId, estado);
       router.refresh();
-      toast(estado === "En Proceso" ? "Proceso iniciado" : "Entrega registrada exitosamente");
+      toast(estado === "En Proceso" ? "Diagnóstico en proceso" : "Venta adjudicada exitosamente");
     });
   }
+
+  const totalAdjudicados = ventasGaraje.filter((v) => v.estado === "Adjudicado").length;
+  const cupoUCC = ventasGaraje.filter((v) => v.canal === "Cupo Preferencial Estudiantes UCC").length;
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">
-            Portal de Simbiosis Académica
-            <ConceptTooltip concepto="Simbiosis Industrial/Académica" explicacion="La simbiosis académica aplica el concepto de simbiosis industrial: los residuos de una organización (Ceiba) se convierten en recursos para otra (UCC/instituciones educativas), creando un ciclo virtuoso de valor compartido." />
+            Ventas de Garaje Circulares
+            <ConceptTooltip concepto="Reutilización y Economía del Bien Común" explicacion="Las ventas de garaje circulares de Ceiba Software ofrecen hardware corporativo usado a precios muy por debajo del mercado, extendiendo la vida útil de los equipos y cerrando la brecha digital. Los estudiantes UCC Pasto acceden con cupo preferencial tras diagnóstico técnico en sus laboratorios de Ingeniería de Software." />
           </h1>
-          <p className="text-sm text-gray-500 mt-1">Ceiba Software + Universidad Cooperativa de Colombia &mdash; Campus Pasto</p>
+          <p className="text-sm text-gray-500 mt-1">Reutilización de Hardware Ceiba + Cupo Preferencial UCC Pasto</p>
         </div>
-        <button onClick={() => setShowAssign(true)} className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm font-medium">
-          <UserPlus className="w-4 h-4" /> Nueva Asignación
+        <button onClick={() => setShowForm(true)} className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm font-medium">
+          <ShoppingBag className="w-4 h-4" /> Adjudicar en Venta de Garaje
         </button>
       </div>
 
@@ -75,118 +85,131 @@ export default function SimbiosisClient({ equipos, instituciones, asignaciones, 
           <p className="text-xs text-gray-500">Equipos Disponibles</p>
           <p className="text-2xl font-bold text-gray-900">{equipos.length}</p>
         </div>
+        <div className="kpi-card border-l-4 border-l-emerald-500">
+          <Tag className="w-5 h-5 text-emerald-500 mb-1" />
+          <p className="text-xs text-gray-500">Ventas Adjudicadas</p>
+          <p className="text-2xl font-bold text-gray-900">{totalAdjudicados}</p>
+        </div>
         <div className="kpi-card border-l-4 border-l-blue-500">
           <GraduationCap className="w-5 h-5 text-blue-500 mb-1" />
-          <p className="text-xs text-gray-500">Reacondicionamientos UCC</p>
-          <p className="text-2xl font-bold text-gray-900">{asignaciones.filter((a) => a.tipo === "Reacondicionamiento UCC").length}</p>
-        </div>
-        <div className="kpi-card border-l-4 border-l-emerald-500">
-          <School className="w-5 h-5 text-emerald-500 mb-1" />
-          <p className="text-xs text-gray-500">Instituciones Beneficiadas</p>
-          <p className="text-2xl font-bold text-gray-900">{new Set(asignaciones.filter((a) => a.institucionId).map((a) => a.institucionId)).size}</p>
+          <p className="text-xs text-gray-500">Cupo UCC Pasto</p>
+          <p className="text-2xl font-bold text-gray-900">{cupoUCC}</p>
         </div>
         <div className="kpi-card border-l-4 border-l-amber-500">
-          <CheckCircle className="w-5 h-5 text-amber-500 mb-1" />
-          <p className="text-xs text-gray-500">Entregas Completadas</p>
-          <p className="text-2xl font-bold text-gray-900">{asignaciones.filter((a) => a.estado === "Entregado").length}</p>
+          <Building2 className="w-5 h-5 text-amber-500 mb-1" />
+          <p className="text-xs text-gray-500">Instituciones Aliadas</p>
+          <p className="text-2xl font-bold text-gray-900">{instituciones.length}</p>
         </div>
       </div>
 
       {/* Available Equipment Catalog */}
       <div className="card">
         <h3 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
-          <Package className="w-4 h-4 text-purple-600" />
-          Catálogo de Equipos Disponibles para Proyección Social
+          <ShoppingBag className="w-4 h-4 text-purple-600" />
+          Catálogo Venta de Garaje Bimensual &mdash; Equipos con Borrado NIST Certificado
         </h3>
         {equipos.length === 0 ? (
-          <p className="text-sm text-gray-500 py-4 text-center">No hay equipos disponibles. Avance equipos a &quot;Listo para Simbiosis UCC&quot; desde el Gestor de Ciclo de Vida.</p>
+          <p className="text-sm text-gray-500 py-4 text-center">No hay equipos disponibles. Avance equipos a &quot;Aprobado para Venta de Garaje&quot; desde el Gestor de Ciclo de Vida.</p>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-            {equipos.map((eq) => (
-              <div key={eq.id} className="p-3 rounded-lg border border-purple-100 bg-purple-50/30">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">{eq.nombre}</p>
-                    <p className="text-xs text-gray-500">{eq.procesador} &middot; {eq.ram}</p>
-                    <p className="text-xs text-gray-500">{eq.almacenamiento}</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {equipos.map((eq) => {
+              const minerals = getMinerals(eq.tipo);
+              const co2Saved = (eq.vidaExtendidaAnios + 2) * 65;
+              const mineralsSaved = minerals.litio + minerals.cobalto + minerals.cobre + minerals.tierrasRaras;
+              return (
+                <div key={eq.id} className="p-4 rounded-lg border border-purple-100 bg-purple-50/30 space-y-3">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <p className="text-sm font-semibold text-gray-900">{eq.nombre}</p>
+                      <p className="text-xs text-gray-600">{eq.procesador} · {eq.ram} · {eq.almacenamiento}</p>
+                    </div>
+                    {eq.precioVentaGaraje && eq.precioComercialEstimado && (
+                      <span className="badge bg-emerald-100 text-emerald-700 font-bold">
+                        -{calcAhorro(eq.precioVentaGaraje, eq.precioComercialEstimado)}% ahorro
+                      </span>
+                    )}
                   </div>
-                  <span className="badge bg-emerald-100 text-emerald-700">
-                    <CheckCircle className="w-3 h-3" /> Borrado NIST
-                  </span>
+
+                  {eq.precioVentaGaraje && eq.precioComercialEstimado && (
+                    <div className="flex items-baseline gap-3">
+                      <p className="text-lg font-bold text-purple-700">{formatCOP(eq.precioVentaGaraje)}</p>
+                      <p className="text-xs text-gray-400 line-through">{formatCOP(eq.precioComercialEstimado)}</p>
+                      <span className="text-xs text-gray-500">comercial</span>
+                    </div>
+                  )}
+
+                  <div className="flex items-center gap-3 flex-wrap">
+                    <span className="badge bg-blue-100 text-blue-700">
+                      <CheckCircle className="w-3 h-3" /> Borrado NIST 800-88
+                    </span>
+                    <span className="badge bg-emerald-50 text-emerald-700">
+                      <Leaf className="w-3 h-3" /> {co2Saved} kg CO₂ evitados
+                    </span>
+                    <span className="badge bg-amber-50 text-amber-700">
+                      {mineralsSaved.toFixed(1)}g minerales salvados
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-2 text-xs text-gray-500">
+                    <Users className="w-3 h-3" />
+                    <span>Colaboradores Ceiba</span>
+                    <span className="mx-1">·</span>
+                    <GraduationCap className="w-3 h-3" />
+                    <ConceptTooltip concepto="Cupo Preferencial UCC" explicacion="Los equipos pasan primero por diagnóstico técnico en los laboratorios de Ingeniería de Software de la UCC Pasto. Los estudiantes acceden con cupo preferencial a precios de venta de garaje, cerrando la brecha digital y fortaleciendo la formación práctica." />
+                    <span>Cupo Preferencial UCC Pasto</span>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
 
-      {/* Institutions */}
-      <div className="card">
-        <h3 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
-          <School className="w-4 h-4 text-blue-600" />
-          Instituciones Educativas Destinatarias &mdash; Nariño
-          <ConceptTooltip concepto="Economía del Bien Común" explicacion="El cierre de brecha digital mediante la donación de equipos a comunidades rurales es un ejemplo de Economía del Bien Común: el valor generado se mide por el bienestar social, no solo por el beneficio económico." />
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-          {instituciones.map((inst) => (
-            <div key={inst.id} className="p-3 rounded-lg border hover:shadow-sm transition-shadow">
-              <p className="text-sm font-medium text-gray-900">{inst.nombre}</p>
-              <div className="flex items-center gap-1 mt-1">
-                <MapPin className="w-3 h-3 text-gray-500" />
-                <p className="text-xs text-gray-500">{inst.municipio}, {inst.departamento}</p>
-              </div>
-              <span className="badge bg-blue-100 text-blue-700 mt-2">{inst.tipo}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Assignments Timeline */}
+      {/* Sales Timeline */}
       <div className="card">
         <h3 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
           <Clock className="w-4 h-4 text-amber-600" />
-          Registro de Asignaciones y Entregas
+          Registro de Ventas de Garaje
         </h3>
-        {asignaciones.length === 0 ? (
-          <p className="text-sm text-gray-500 py-4 text-center">No hay asignaciones registradas.</p>
+        {ventasGaraje.length === 0 ? (
+          <p className="text-sm text-gray-500 py-4 text-center">No hay ventas registradas.</p>
         ) : (
           <div className="space-y-3">
-            {asignaciones.map((asig) => {
-              const eq = todosEquipos.find((e) => e.id === asig.equipoId);
-              const inst = instituciones.find((i) => i.id === asig.institucionId);
+            {ventasGaraje.map((venta) => {
+              const eq = todosEquipos.find((e) => e.id === venta.equipoId);
               return (
-                <div key={asig.id} className="p-4 rounded-lg border hover:shadow-sm transition-shadow">
+                <div key={venta.id} className="p-4 rounded-lg border hover:shadow-sm transition-shadow">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className={`badge ${ESTADO_ASIGNACION_COLORS[asig.estado]}`}>{asig.estado}</span>
-                        <span className="badge bg-gray-100 text-gray-700">{asig.tipo}</span>
+                        <span className={`badge ${ESTADO_VENTA_COLORS[venta.estado]}`}>{venta.estado}</span>
+                        <span className="badge bg-gray-100 text-gray-700">{venta.canal}</span>
                       </div>
-                      <p className="text-sm font-medium text-gray-900 mt-1">{eq?.nombre || asig.equipoId}</p>
-                      {inst && <p className="text-xs text-gray-500">Destino: {inst.nombre} ({inst.municipio})</p>}
-                      {asig.estudianteNombre && (
-                        <p className="text-xs text-blue-600 mt-1 flex items-center gap-1">
-                          <GraduationCap className="w-3 h-3" /> Practicante UCC: {asig.estudianteNombre}
+                      <p className="text-sm font-medium text-gray-900 mt-1">{eq?.nombre || venta.equipoId}</p>
+                      {eq?.precioVentaGaraje && (
+                        <p className="text-xs text-purple-600 font-semibold mt-1">{formatCOP(eq.precioVentaGaraje)}</p>
+                      )}
+                      {venta.compradorNombre && (
+                        <p className="text-xs text-gray-600 mt-1 flex items-center gap-1">
+                          <Users className="w-3 h-3" /> Comprador: {venta.compradorNombre}
                         </p>
                       )}
-                      {asig.notasLinux && <p className="text-xs text-gray-500 mt-1">Linux: {asig.notasLinux}</p>}
-                      {asig.diagnostico && <p className="text-xs text-gray-500 mt-1">Diagnóstico: {asig.diagnostico}</p>}
-                      <p className="text-xs text-gray-500 mt-1">Asignado: {asig.fechaAsignacion}{asig.fechaEntrega && ` · Entregado: ${asig.fechaEntrega}`}</p>
+                      {venta.estudianteUCC && (
+                        <p className="text-xs text-blue-600 mt-1 flex items-center gap-1">
+                          <GraduationCap className="w-3 h-3" /> Estudiante UCC: {venta.estudianteUCC}
+                        </p>
+                      )}
+                      {venta.diagnostico && <p className="text-xs text-gray-500 mt-1">Diagnóstico: {venta.diagnostico}</p>}
+                      <p className="text-xs text-gray-500 mt-1">Registrado: {venta.fechaRegistro}{venta.fechaAdjudicacion && ` · Adjudicado: ${venta.fechaAdjudicacion}`}</p>
                     </div>
                     <div className="flex gap-2">
-                      {asig.estado === "Pendiente" && (
-                        <button onClick={() => handleUpdateEstado(asig.id, "En Proceso")} disabled={isPending}
-                          className="px-3 py-1 text-xs bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors">Iniciar</button>
+                      {venta.estado === "Pendiente" && (
+                        <button onClick={() => handleUpdateEstado(venta.id, "En Proceso")} disabled={isPending}
+                          className="px-3 py-1 text-xs bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors">Iniciar Diagnóstico</button>
                       )}
-                      {asig.estado === "En Proceso" && (
-                        <button onClick={() => handleUpdateEstado(asig.id, "Entregado")} disabled={isPending}
-                          className="px-3 py-1 text-xs bg-emerald-100 text-emerald-700 rounded hover:bg-emerald-200 transition-colors">Marcar Entregado</button>
-                      )}
-                      {asig.estado === "Entregado" && (
-                        <button onClick={() => setShowActa(asig)}
-                          className="px-3 py-1 text-xs bg-purple-100 text-purple-700 rounded hover:bg-purple-200 transition-colors flex items-center gap-1">
-                          <FileText className="w-3 h-3" /> Ver Acta
-                        </button>
+                      {venta.estado === "En Proceso" && (
+                        <button onClick={() => handleUpdateEstado(venta.id, "Adjudicado")} disabled={isPending}
+                          className="px-3 py-1 text-xs bg-emerald-100 text-emerald-700 rounded hover:bg-emerald-200 transition-colors">Adjudicar Venta</button>
                       )}
                     </div>
                   </div>
@@ -197,116 +220,48 @@ export default function SimbiosisClient({ equipos, instituciones, asignaciones, 
         )}
       </div>
 
-      {/* New Assignment Modal */}
-      {showAssign && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4" onClick={() => setShowAssign(false)}>
+      {/* New Sale Modal */}
+      {showForm && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4" onClick={() => setShowForm(false)}>
           <div className="bg-white rounded-xl p-6 w-full max-w-lg" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-bold text-gray-900">Nueva Asignación</h2>
-              <button onClick={() => setShowAssign(false)}><X className="w-5 h-5" /></button>
+              <h2 className="text-lg font-bold text-gray-900">Adjudicar en Venta de Garaje</h2>
+              <button onClick={() => setShowForm(false)}><X className="w-5 h-5" /></button>
             </div>
-            <form action={handleAssign} className="space-y-3">
+            <form action={handleVenta} className="space-y-3">
               <div>
                 <label className="text-xs font-medium text-gray-600">Equipo</label>
                 <select name="equipoId" required className="w-full mt-1 px-3 py-2 rounded-lg border text-sm">
                   {equipos.map((eq) => (
-                    <option key={eq.id} value={eq.id}>{eq.nombre}</option>
+                    <option key={eq.id} value={eq.id}>
+                      {eq.nombre} {eq.precioVentaGaraje ? `- ${formatCOP(eq.precioVentaGaraje)}` : ""}
+                    </option>
                   ))}
                 </select>
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600">Tipo de Asignación</label>
-                <select name="tipo" required className="w-full mt-1 px-3 py-2 rounded-lg border text-sm">
-                  <option value="Reacondicionamiento UCC">Reacondicionamiento UCC (Practicante)</option>
-                  <option value="Donación Institución">Donación a Institución Educativa</option>
+                <label className="text-xs font-medium text-gray-600">Canal de Acceso</label>
+                <select name="canal" required className="w-full mt-1 px-3 py-2 rounded-lg border text-sm">
+                  <option value="Colaboradores Ceiba">Colaboradores Ceiba</option>
+                  <option value="Cupo Preferencial Estudiantes UCC">Cupo Preferencial Estudiantes UCC Pasto</option>
                 </select>
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600">Institución Destino</label>
-                <select name="institucionId" className="w-full mt-1 px-3 py-2 rounded-lg border text-sm">
-                  <option value="">Sin asignar aún</option>
-                  {instituciones.map((inst) => (
-                    <option key={inst.id} value={inst.id}>{inst.nombre} ({inst.municipio})</option>
-                  ))}
-                </select>
+                <label className="text-xs font-medium text-gray-600">Nombre del Comprador</label>
+                <input name="compradorNombre" className="w-full mt-1 px-3 py-2 rounded-lg border text-sm" placeholder="Nombre completo" />
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600">Estudiante Practicante UCC (opcional)</label>
-                <input name="estudianteNombre" className="w-full mt-1 px-3 py-2 rounded-lg border text-sm" placeholder="Nombre del estudiante de Ingeniería de Software" />
+                <label className="text-xs font-medium text-gray-600">Estudiante UCC (si aplica)</label>
+                <input name="estudianteUCC" className="w-full mt-1 px-3 py-2 rounded-lg border text-sm" placeholder="Nombre del estudiante Ing. Software UCC" />
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600">Distribución Linux a instalar</label>
-                <input name="notasLinux" className="w-full mt-1 px-3 py-2 rounded-lg border text-sm" placeholder="Ubuntu 22.04 LTS educativo" />
-              </div>
-              <div>
-                <label className="text-xs font-medium text-gray-600">Diagnóstico del equipo</label>
+                <label className="text-xs font-medium text-gray-600">Diagnóstico técnico</label>
                 <textarea name="diagnostico" rows={2} className="w-full mt-1 px-3 py-2 rounded-lg border text-sm" placeholder="Estado general, batería, pantalla..." />
               </div>
               <button type="submit" disabled={isPending} className="w-full py-2.5 bg-purple-600 text-white rounded-lg hover:bg-purple-700 text-sm font-medium disabled:opacity-50">
-                {isPending ? "Asignando..." : "Crear Asignación"}
+                {isPending ? "Adjudicando..." : "Adjudicar en Venta de Garaje"}
               </button>
             </form>
-          </div>
-        </div>
-      )}
-
-      {/* Digital Delivery Act Modal */}
-      {showActa && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4" onClick={() => setShowActa(null)}>
-          <div className="bg-white rounded-xl p-6 w-full max-w-md" onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-bold text-gray-900">Acta Digital de Entrega</h2>
-              <button onClick={() => setShowActa(null)}><X className="w-5 h-5" /></button>
-            </div>
-            {(() => {
-              const eq = todosEquipos.find((e) => e.id === showActa.equipoId);
-              const inst = instituciones.find((i) => i.id === showActa.institucionId);
-              return (
-                <div className="space-y-3 text-sm">
-                  <div className="p-4 rounded-lg bg-purple-50 border border-purple-200 text-center">
-                    <p className="text-xs text-purple-600 uppercase tracking-wide font-bold">Certificado de Entrega</p>
-                    <p className="text-lg font-bold text-purple-900 mt-1">Programa de Simbiosis Académica</p>
-                    <p className="text-xs text-purple-700">Ceiba Software + UCC Campus Pasto</p>
-                  </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <p className="text-xs text-gray-500">Equipo</p>
-                      <p className="font-medium">{eq?.nombre}</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-500">Serial</p>
-                      <p className="font-medium font-mono text-xs">{eq?.serial}</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-500">Institución Destino</p>
-                      <p className="font-medium">{inst?.nombre || "N/A"}</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-500">Municipio</p>
-                      <p className="font-medium">{inst?.municipio || "N/A"}, Nariño</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-500">Fecha Entrega</p>
-                      <p className="font-medium">{showActa.fechaEntrega}</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-500">Borrado Seguro</p>
-                      <p className="font-medium text-emerald-700">NIST 800-88 Certificado</p>
-                    </div>
-                  </div>
-                  {showActa.diagnostico && (
-                    <div>
-                      <p className="text-xs text-gray-500">Diagnóstico</p>
-                      <p className="text-sm">{showActa.diagnostico}</p>
-                    </div>
-                  )}
-                  <div className="p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-center text-xs text-emerald-700">
-                    <p className="font-bold">Contribución al cierre de brecha digital en Nariño</p>
-                    <p>Economía del Bien Común &middot; Economía Circular TI</p>
-                  </div>
-                </div>
-              );
-            })()}
           </div>
         </div>
       )}

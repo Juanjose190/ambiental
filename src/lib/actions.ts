@@ -87,36 +87,34 @@ export async function generarCertificadoRAEE(
   saveDb(db);
 }
 
-export async function crearAsignacion(
+export async function crearVentaGaraje(
   equipoId: string,
-  tipo: "Reacondicionamiento UCC" | "Donación Institución",
-  institucionId?: string,
-  estudianteNombre?: string,
-  notasLinux?: string,
+  canal: "Colaboradores Ceiba" | "Cupo Preferencial Estudiantes UCC",
+  compradorNombre?: string,
+  estudianteUCC?: string,
   diagnostico?: string,
 ) {
   const db = getDb();
-  db.asignaciones.push({
+  db.ventasGaraje.push({
     id: genId(),
     equipoId,
-    institucionId,
-    estudianteNombre,
-    tipo,
+    canal,
+    compradorNombre,
+    estudianteUCC,
     estado: "Pendiente",
-    fechaAsignacion: new Date().toISOString().slice(0, 10),
-    notasLinux,
+    fechaRegistro: new Date().toISOString().slice(0, 10),
     diagnostico,
   });
   saveDb(db);
 }
 
-export async function actualizarAsignacion(asignacionId: string, estado: "En Proceso" | "Entregado") {
+export async function actualizarVentaGaraje(ventaId: string, estado: "En Proceso" | "Adjudicado") {
   const db = getDb();
-  const idx = db.asignaciones.findIndex((a) => a.id === asignacionId);
-  if (idx === -1) throw new Error("Asignación no encontrada");
-  db.asignaciones[idx].estado = estado;
-  if (estado === "Entregado") {
-    db.asignaciones[idx].fechaEntrega = new Date().toISOString().slice(0, 10);
+  const idx = db.ventasGaraje.findIndex((v) => v.id === ventaId);
+  if (idx === -1) throw new Error("Venta no encontrada");
+  db.ventasGaraje[idx].estado = estado;
+  if (estado === "Adjudicado") {
+    db.ventasGaraje[idx].fechaAdjudicacion = new Date().toISOString().slice(0, 10);
   }
   saveDb(db);
 }

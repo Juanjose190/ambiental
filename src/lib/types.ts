@@ -13,9 +13,11 @@ export interface Equipo {
   vidaExtendidaAnios: number;
   certificacion: "EPEAT Gold" | "Energy Star" | "TCO Certified" | "Sin Certificación";
   empaqueSostenible: boolean;
-  estado: "En Uso" | "Mantenimiento Preventivo" | "Reparación" | "Listo para Simbiosis UCC" | "Baja RAEE";
+  estado: "En Uso" | "Mantenimiento Preventivo" | "Reparación" | "Aprobado para Venta de Garaje" | "Baja RAEE";
   borradoSeguro: boolean;
   borradoFecha?: string;
+  precioVentaGaraje?: number;
+  precioComercialEstimado?: number;
 }
 
 export interface AccionR {
@@ -37,16 +39,15 @@ export interface Institucion {
   contacto?: string;
 }
 
-export interface Asignacion {
+export interface VentaGaraje {
   id: string;
   equipoId: string;
-  institucionId?: string;
-  estudianteNombre?: string;
-  tipo: "Reacondicionamiento UCC" | "Donación Institución";
-  estado: "Pendiente" | "En Proceso" | "Entregado";
-  fechaAsignacion: string;
-  fechaEntrega?: string;
-  notasLinux?: string;
+  canal: "Colaboradores Ceiba" | "Cupo Preferencial Estudiantes UCC";
+  compradorNombre?: string;
+  estudianteUCC?: string;
+  estado: "Pendiente" | "En Proceso" | "Adjudicado";
+  fechaRegistro: string;
+  fechaAdjudicacion?: string;
   diagnostico?: string;
 }
 
@@ -82,7 +83,7 @@ export interface Database {
   equipos: Equipo[];
   acciones: AccionR[];
   instituciones: Institucion[];
-  asignaciones: Asignacion[];
+  ventasGaraje: VentaGaraje[];
   certificadosRAEE: CertificadoRAEE[];
   registrosMensuales: RegistroMensual[];
   configGreenOps: ConfigGreenOps;
